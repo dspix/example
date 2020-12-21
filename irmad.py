@@ -299,7 +299,7 @@ def imad(img1, img2):
     
     lam = 0.0
     
-    cpm = auxil.Cpm(2*bands)    
+    cpm = Cpm(2*bands)    
     delta = 1.0
     oldrho = np.zeros(bands)     
     itr = 0
@@ -351,8 +351,8 @@ def imad(img1, img2):
         b2 = s22
 #     solution of generalized eigenproblems 
         if bands>1:
-            mu2a,A = auxil.geneiv(c1,b1)                
-            mu2b,B = auxil.geneiv(c2,b2)               
+            mu2a,A = geneiv(c1,b1)                
+            mu2b,B = geneiv(c2,b2)               
 #          sort a   
             idx = np.argsort(mu2a)
             A = A[:,idx]        
@@ -428,3 +428,28 @@ class Cpm(object):
 
     def means(self):
         return self.mn
+
+def choldc(A):
+# Cholesky-Banachiewicz algorithm,
+# A is a numpy matrix
+    L = A - A
+    for i in range(len(L)):
+        for j in range(i):
+            sm = 0.0
+            for k in range(j):
+                sm += L[i,k]*L[j,k]
+            L[i,j] = (A[i,j]-sm)/L[j,j]
+        sm = 0.0
+        for k in range(i):
+            sm += L[i,k]*L[i,k]
+        L[i,i] = math.sqrt(A[i,i]-sm)
+    return L
+
+def geneiv(A,B):
+# solves A*x = lambda*B*x for numpy matrices A and B,
+# returns eigenvectors in columns
+    Li = np.linalg.inv(choldc(B))
+    C = Li*A*(Li.transpose())
+    C = np.asmatrix((C + C.transpose())*0.5,np.float32)
+    eivs,V = np.linalg.eig(C)
+    return eivs, Li.transpose()*V
