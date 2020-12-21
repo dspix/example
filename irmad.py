@@ -12,6 +12,7 @@ import ogr
 import sys
 import numpy as np
 import warnings
+import math
 
 from skimage.measure import block_reduce
 from scipy import ndimage
