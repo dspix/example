@@ -290,9 +290,7 @@ def aggregate(subset, factor, agg_func = np.mean):
 def imad(img1, img2):
        
     # Dimensions, assume they match!
-    rows = img1.get_row_count()
-    cols = img1.get_column_count()
-    bands = img1.get_band_count()
+    bands, rows, cols = img1.shape
     
     # Matched dimensions so;
     dims = [0,0,cols,rows]
