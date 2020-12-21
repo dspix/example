@@ -309,8 +309,8 @@ def imad(img1, img2):
     means2 = 0
     A = 0
     B = 0
-    rasterBands1 = img1.pixels()
-    rasterBands2 = img2.pixels()
+    rasterBands1 = img1
+    rasterBands2 = img2
                    
     while (delta > 0.001) and (itr < 100):   
 #      spectral tiling for statistics
