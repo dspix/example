@@ -242,7 +242,7 @@ def scale(rgb, n = 2., method = 'sd', ignore_zero = False):
         
     scaled = rgb.copy()
     
-    for b in xrange(len(rgb)):
+    for b in range(len(rgb)):
         
         band = scaled[b]
         
