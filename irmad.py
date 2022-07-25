@@ -8,7 +8,7 @@ Created on Fri Jan  5 17:56:08 2018
 The irmad code comes from https://github.com/mortcanty/CRCPython
 """
 from osgeo import gdal
-import ogr
+from osgeo import ogr
 import sys
 import numpy as np
 import warnings
