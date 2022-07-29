@@ -454,3 +454,49 @@ def geneiv(A,B):
     C = np.asmatrix((C + C.transpose())*0.5,np.float32)
     eivs,V = np.linalg.eig(C)
     return eivs, Li.transpose()*V
+
+def get_radcal_coeffs(src_pixels, tar_pixels, mads, prob=.95):
+    '''Get the betas for empirical line calibration from
+    orthogonal regression of the source (src_pix) and 
+    target (tar_pix) pixels using the no-change prob from 
+    the MADs.
+    '''
+    info = {}
+    d_prob = 1-stats.chi2.cdf(mads[-1],[len(mads-1)]) # Prob. of no change
+
+    mask = np.zeros(d_prob.shape)
+    mask[d_prob>prob] = 1
+    
+    info['n_pixels'] = len(mask[mask==1])
+    
+    src_nchange = src_pixels*mask
+    tar_nchange = tar_pixels*mask
+
+    # By band
+    nbands = len(src_nchange)
+    r2s = []
+    models = []
+    xs = []
+    ys = []
+
+    for band in range(nbands):
+        src_band = src_nchange[band]
+        tar_band = tar_nchange[band]
+
+        x = src_band[src_band!=0]
+        y = tar_band[tar_band!=0]
+
+        model = orthogonal_linear_model()
+        model.fit(x, y)
+        xs.append(x)
+        ys.append(y)
+        models.append(model)
+        r2 = model.score(x, y)
+        r2s.append(r2)
+
+    info['models'] = models
+    info['r2'] = r2s
+    info['x'] = xs
+    info['y'] = ys
+    return info
+
